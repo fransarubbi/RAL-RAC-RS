@@ -21,10 +21,12 @@ int main(){
     
     int menu, lect;
     rebSep rs;
+    rebAbLin ral;
     Deliveries dev;
     StructCost c;
 
     initRebSep(&rs);
+    initRebAbLin(&ral);
     initStructCost(&c);
 
     do{

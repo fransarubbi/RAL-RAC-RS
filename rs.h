@@ -64,11 +64,13 @@ int localizarRebSep(rebSep *rs, char c[], int *position, float *costo){
         costLoc += 1;
     }
 
-    *costo = costLoc;
     if(rs->cursor != NULL){
+        costLoc += 1;
+        *costo = costLoc;
         return 1;
     }
     else{
+        *costo = costLoc;
         return 0;
     }
 }

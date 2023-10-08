@@ -1,5 +1,7 @@
 #ifndef DELIVERIES_H_INCLUDED
 #define DELIVERIES_H_INCLUDED
+#define VIRGEN "*"
+#define LIBRE "+"
 #include <stdio.h>
 #include <string.h>
 #include <malloc.h>
