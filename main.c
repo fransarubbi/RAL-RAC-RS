@@ -25,8 +25,8 @@ int main(){
     Deliveries dev;
     StructCost c;
 
-    initRebSep(&rs);
-    initRebAbLin(&ral);
+    initRS(&rs);
+    initRAL(&ral);
     initStructCost(&c);
 
     do{
@@ -151,7 +151,7 @@ void loadDeliveries(Deliveries *dev){
 
 
 void resetAll(rebSep *rs){
-    resetRebSep(rs);
+    resetRS(rs);
 }
 
 
@@ -188,7 +188,7 @@ void mostrarEstructuras(rebSep rs){
                         }
                         else{
                             printf("\n\n      Mostrando %d elementos\n", rs.cant);
-                            mostrarRs(rs);
+                            mostrarRS(rs);
                         }
                         break;
 
@@ -263,7 +263,7 @@ int preload(rebSep *rs){
             }
             strcpy(&dev.dateReceived, dateR);
 
-            value = altaRebSep(rs, dev);
+            value = altaRS(rs, dev);
 
             switch(value){
                 case 0: printf("|----------------------------------------------|\n");
@@ -373,7 +373,7 @@ int lecturaOperaciones(StructCost *c, rebSep *rs){
                 strcpy(&dev.dateReceived, dateR);
 
                 switch(codeOperator){
-                    case 1: value = altaRebSep(rs, dev);
+                    case 1: value = altaRS(rs, dev);
                             if(value == 2){
 
                             }
@@ -381,7 +381,7 @@ int lecturaOperaciones(StructCost *c, rebSep *rs){
 
 
                     case 2: if(rs->cant != 0){
-                                value = bajaRebSep(rs, dev);
+                                value = bajaRS(rs, dev);
                             }
                             break;
                 }
@@ -390,7 +390,7 @@ int lecturaOperaciones(StructCost *c, rebSep *rs){
                 if(codeOperator == 3){
                     if(rs->cant != 0){
                         costo = 0.0;
-                        value = evocacionRebSep(*rs, &dev, &costo);
+                        value = evocacionRS(*rs, &dev, &costo);
                         if(value == 1){
                             if(c->rs.maxCostSucEvo < costo){
                                 c->rs.maxCostSucEvo = costo;

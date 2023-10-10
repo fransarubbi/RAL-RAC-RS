@@ -1,6 +1,6 @@
 #ifndef RS_H_INCLUDED
 #define RS_H_INCLUDED
-#define MRS 437  //numero primo proximo a 435
+#define MRS 207  //usando un p=1.45
 #include <stdlib.h>
 #include "envios.h"
 
@@ -20,7 +20,7 @@ typedef struct{
 
 
 //Inicializacion del rebalse separado
-void initRebSep(rebSep *rs){
+void initRS(rebSep *rs){
 
     int i;
     for(i = 0; i < MRS; i++){
@@ -31,7 +31,7 @@ void initRebSep(rebSep *rs){
 
 
 //Resetear rebalse para comparar estructuras
-void resetRebSep(rebSep *rs){
+void resetRS(rebSep *rs){
 
     int i;
     for(i = 0; i < MRS; i++){
@@ -51,7 +51,7 @@ Codificacion de Localizacion:
 return 0 - Fracaso, no esta el elemento
 return 1 - Exito
 */
-int localizarRebSep(rebSep *rs, char c[], int *position, float *costo){
+int localizarRS(rebSep *rs, char c[], int *position, float *costo){
 
     float costLoc = 0.0;
     *position = hashing(c, MRS);
@@ -82,7 +82,7 @@ return 0 - Fracaso, no hay mas memoria
 return 1 - Fracaso, elemento existente
 return 2 - Exito
 */
-int altaRebSep(rebSep *rs, Deliveries dev){
+int altaRS(rebSep *rs, Deliveries dev){
 
     int position;
     float costLoc;
@@ -92,7 +92,7 @@ int altaRebSep(rebSep *rs, Deliveries dev){
         return 0;
     }
     else{
-        if(localizarRebSep(rs, dev.code, &position, &costLoc) == 1){
+        if(localizarRS(rs, dev.code, &position, &costLoc) == 1){
             free((void*)newBalde);
             return 1;
         }
@@ -113,11 +113,11 @@ return 0 - Fracaso, elemento inexistente
 return 1 - Fracaso, no coincide la nupla completa
 return 2 - Exito
 */
-int bajaRebSep(rebSep *rs, Deliveries dev){
+int bajaRS(rebSep *rs, Deliveries dev){
 
     int position;
     float costLoc;
-    if(localizarRebSep(rs, dev.code, &position, &costLoc) == 0){
+    if(localizarRS(rs, dev.code, &position, &costLoc) == 0){
         return 0;
     }
     else{
@@ -150,11 +150,11 @@ Codificacion de Evocacion:
 return 0 - Fracaso, elemento inexistente
 return 1 - Exito
 */
-int evocacionRebSep(rebSep rs, Deliveries *dev, float *costo){
+int evocacionRS(rebSep rs, Deliveries *dev, float *costo){
 
     int position;
     float costLoc;
-    if(localizarRebSep(&rs, (*dev).code, &position, &costLoc) == 0){
+    if(localizarRS(&rs, (*dev).code, &position, &costLoc) == 0){
         *costo = costLoc;
         return 0;
     }
@@ -173,7 +173,7 @@ int evocacionRebSep(rebSep rs, Deliveries *dev, float *costo){
 }
 
 
-void mostrarRs(rebSep rs){
+void mostrarRS(rebSep rs){
 
     int i;
     for(i = 0; i < MRS; i++){

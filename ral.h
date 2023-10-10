@@ -1,6 +1,6 @@
 #ifndef RAL_H_INCLUDED
 #define RAL_H_INCLUDED
-#define MRAL 437  
+#define MRAL 358   //usando un p=0.84 
 #include <stdlib.h>
 #include "envios.h"
 
@@ -12,7 +12,7 @@ typedef struct{
 
 
 //Colocar marcas de VIRGEN en todos los baldes
-void initRebAbLin(rebAbLin *ral){
+void initRAL(rebAbLin *ral){
     int i;
     for(i = 0; i < MRAL; i++){
         strcpy(ral->dev[i].code, VIRGEN);
@@ -22,11 +22,10 @@ void initRebAbLin(rebAbLin *ral){
 
 
 /*
-return 0 - Fracaso, no existe el elemento
-return 1 - Fracaso
-return 2
+return 0 - Fracaso
+return 1 - Exito
 */
-int localizarRebAbLin(rebAbLin *ral, char c[], int *position, float *costo){
+int localizarRAL(rebAbLin *ral, char c[], int *position, float *costo){
 
     int hash, contador = 0, celda = -1;
     float costLoc = 0.0;
@@ -48,7 +47,7 @@ int localizarRebAbLin(rebAbLin *ral, char c[], int *position, float *costo){
         costLoc += 1;
         if(strcmp(ral->dev[hash].code, VIRGEN) != 0){
             *position = hash;
-            return 1;
+            return 0;
         }
         else{
             if(celda != -1){
@@ -66,8 +65,20 @@ int localizarRebAbLin(rebAbLin *ral, char c[], int *position, float *costo){
             *position = celda;
             return 0;
         }
-        return 2;
+        return 1;
     }
+}
+
+
+int altaRAL(rebAbLin *ral, Deliveries dev){
+
+    float costLoc = 0.0;
+    int position;
+
+    if(localizarRAL(ral, dev.code, &position, &costLoc) == 0){
+        
+    }
+
 }
 
 
