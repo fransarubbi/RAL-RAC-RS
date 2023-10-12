@@ -63,6 +63,7 @@ int localizarRS(rebSep *rs, char c[], int *position, float *costo){
         rs->cursor = rs->cursor->prox;
         costLoc += 1;
     }
+    costLoc += 1;   //Costo por consultar el balde cabecera
 
     if(rs->cursor != NULL){
         costLoc += 1;
@@ -153,7 +154,8 @@ return 1 - Exito
 int evocacionRS(rebSep rs, Deliveries *dev, float *costo){
 
     int position;
-    float costLoc;
+    float costLoc = 0.0;
+
     if(localizarRS(&rs, (*dev).code, &position, &costLoc) == 0){
         *costo = costLoc;
         return 0;

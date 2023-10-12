@@ -5,16 +5,15 @@
 
 
 //Funciones menu principal
-void mostrarEstructuras(rebSep );   //Mostrar las 3 estructuras
-int lecturaOperaciones(StructCost *, rebSep *);  //Funcion para leer desde el archivo
+void mostrarEstructuras(rebSep , rebAbLin , rebAbCua);   //Mostrar las 3 estructuras
+int lecturaOperaciones(StructCost *, rebSep *, rebAbLin *, rebAbCua *);  //Funcion para leer desde el archivo
+void mostrarCostos(StructCost );
 
 
 //Funciones internas
 void loadDeliveries(Deliveries *);   //Funcion auxiliar de carga de datos
-void resetAll(rebSep *);   //Funcion para resetear todas las estructuras
+void resetAll(rebSep *, rebAbLin *, rebAbCua *);   //Funcion para resetear todas las estructuras
 
-
-int preload(rebSep *);
 
 
 int main(){
@@ -22,11 +21,13 @@ int main(){
     int menu, lect;
     rebSep rs;
     rebAbLin ral;
+    rebAbCua rac;
     Deliveries dev;
     StructCost c;
 
     initRS(&rs);
     initRAL(&ral);
+    initRAC(&rac);
     initStructCost(&c);
 
     do{
@@ -46,9 +47,9 @@ int main(){
         }while(menu < 1 || menu > 4);
 
         switch(menu){
-            case 1: resetAll(&rs);
+            case 1: resetAll(&rs, &ral, &rac);
                     initStructCost(&c);
-                    lect = lecturaOperaciones(&c, &rs);
+                    lect = lecturaOperaciones(&c, &rs, &ral, &rac);
                     if(lect == 1){
                         mostrarCostos(c);
                     }
@@ -59,7 +60,7 @@ int main(){
                     }
                     break;
 
-            case 2: mostrarEstructuras(rs);
+            case 2: mostrarEstructuras(rs, ral, rac);
                     break;
 
             case 3: mostrarCostos(c);
@@ -150,12 +151,15 @@ void loadDeliveries(Deliveries *dev){
 }
 
 
-void resetAll(rebSep *rs){
+void resetAll(rebSep *rs, rebAbLin *ral, rebAbCua *rac){
     resetRS(rs);
+    initRAL(ral);
+    initRAC(rac);
 }
 
 
-void mostrarEstructuras(rebSep rs){
+//Funciones del menu
+void mostrarEstructuras(rebSep rs, rebAbLin ral, rebAbCua rac){
     
     int enter, opcion;
     do{
@@ -192,100 +196,31 @@ void mostrarEstructuras(rebSep rs){
                         }
                         break;
 
-                case 2: break;
+                case 2: if(ral.cant == 0){
+                            printf("\n|----------------------------------------------------------|");
+                            printf("\n| No se pueden mostrar datos. Rebalse Abierto Lineal Vacio |");
+                            printf("\n|---------------------------------------------------------|\n");
+                        }
+                        else{
+                            printf("\n\n      Mostrando %d elementos\n", ral.cant);
+                            mostrarRAL(ral);
+                        }
+                        break;
 
-                case 3: break;
+                case 3: if(rac.cant == 0){
+                            printf("\n|--------------------------------------------------------------|");
+                            printf("\n| No se pueden mostrar datos. Rebalse Abierto Cuadratico Vacio |");
+                            printf("\n|--------------------------------------------------------------|\n");
+                        }
+                        else{
+                            printf("\n\n      Mostrando %d elementos\n", rac.cant);
+                            mostrarRAC(rac);
+                        }
+                        break;
             }
-
         }
+
     }while(enter != 0);
-}
-
-
-int preload(rebSep *rs){
-
-    Deliveries dev;
-    char code[CODE], name[NAME], nameSender[NAME], addres[NAME], dateS[DATE], dateR[DATE];
-    long dni, dniS;
-    int value, enter, i;
-
-    FILE *preload;
-    preload = fopen("Envios.txt", "r");
-
-    if(preload == NULL){
-        printf("|----------------------------------------------|\n");
-        printf("|       No se pudo acceder al archivo          |\n");
-        printf("|----------------------------------------------|\n\n");
-        return 0;
-    }
-    else{
-        while(!feof(preload)){
-
-            fscanf(preload, " %[^\n]\n", code);
-            for(i = 0; code[i] != '\0'; i++){
-                code[i] = toupper(code[i]);
-            }
-            strcpy(&dev.code, code);
-            
-            fscanf(preload, "%ld\n", &dni);
-            dev.doc = dni;
-            
-            fscanf(preload, " %[^\n]\n", nameSender);
-            for(i = 0; nameSender[i] != '\0'; i++){
-                nameSender[i] = toupper(nameSender[i]);
-            }
-            strcpy(&dev.nameSender, nameSender);
-            
-            fscanf(preload, " %[^\n]\n", addres);
-            for(i = 0; addres[i] != '\0'; i++){
-                addres[i] = toupper(addres[i]);
-            }
-            strcpy(&dev.address, addres);
-            
-            fscanf(preload, "%ld\n", &dniS);
-            dev.docSender = dniS;
-
-            fscanf(preload, " %[^\n]\n", name);
-            for(i = 0; name[i] != '\0'; i++){
-                name[i] = toupper(name[i]);
-            }
-            strcpy(&dev.name, name);
-            
-            fscanf(preload, " %[^\n]\n", dateS);
-            for(i = 0; dateS[i] != '\0'; i++){
-                dateS[i] = toupper(dateS[i]);
-            }
-            strcpy(&dev.dateSender, dateS);
-
-            fscanf(preload, " %[^\n]\n", dateR);
-            for(i = 0; dateR[i] != '\0'; i++){
-                dateR[i] = toupper(dateR[i]);
-            }
-            strcpy(&dev.dateReceived, dateR);
-
-            value = altaRS(rs, dev);
-
-            switch(value){
-                case 0: printf("|----------------------------------------------|\n");
-                        printf("| Error al cargar elemento. No hay mas espacio |\n");
-                        printf("|----------------------------------------------|\n\n");
-                        break;
-            
-                case 1: printf("|-------------------------------------------------|\n");
-                        printf("| Error al cargar elemento. El elemento ya existe |\n");
-                        printf("|-------------------------------------------------|\n\n");
-                        break;
-
-                case 2: printf("|----------------------------------------------|\n");
-                        printf("|            Carga exitosa de datos            |\n");
-                        printf("|----------------------------------------------|\n\n");
-                        break;
-            }
-        }
-        printf("           Elementos cargados: %d\n", rs->cant);
-        fclose(preload);
-        return 1;
-    }
 }
 
 
@@ -293,7 +228,7 @@ void mostrarCostos(StructCost c){
 
     printf("\n|------------------------------------------------------|");
     printf("\n|          Mostrando Costos de las Estructuras         |");
-    printf("\n|------------------------------------------------------|\n\n");
+    printf("\n|------------------------------------------------------|\n");
     printf("\n|------------------------------------------------------|");
     printf("\n|                   Rebalse Separado                   |");
     printf("\n|------------------------------------------------------|");
@@ -303,10 +238,30 @@ void mostrarCostos(StructCost c){
     printf("\n|------------------------------------------------------");
     printf("\n| Evoc. Fracaso |   %.2f                %.2f              ", c.rs.maxCostFailEvo, c.rs.medCostFailEvo);
     printf("\n|------------------------------------------------------|\n");
+
+    printf("\n|------------------------------------------------------|");
+    printf("\n|                Rebalse Abierto Lineal                |");
+    printf("\n|------------------------------------------------------|");
+    printf("\n|    Funcion    |    Costo Max     |     Costo Medio   |");
+    printf("\n|------------------------------------------------------|");
+    printf("\n| Evoc. Exitosa |   %.2f                %.2f              ", c.ral.maxCostSucEvo, c.ral.medCostSucEvo);
+    printf("\n|------------------------------------------------------");
+    printf("\n| Evoc. Fracaso |   %.2f                %.2f              ", c.ral.maxCostFailEvo, c.ral.medCostFailEvo);
+    printf("\n|------------------------------------------------------|\n");
+
+    printf("\n|----------------------------------------------------------|");
+    printf("\n|                Rebalse Abierto Cuadratico                |");
+    printf("\n|----------------------------------------------------------|");
+    printf("\n|     Funcion     |     Costo Max      |     Costo Medio   |");
+    printf("\n|----------------------------------------------------------|");
+    printf("\n| Evoc. Exitosa   |   %.2f                %.2f              ", c.rac.maxCostSucEvo, c.rac.medCostSucEvo);
+    printf("\n|----------------------------------------------------------");
+    printf("\n| Evoc. Fracaso   |   %.2f                %.2f              ", c.rac.maxCostFailEvo, c.rac.medCostFailEvo);
+    printf("\n|----------------------------------------------------------|\n");
 }
 
 
-int lecturaOperaciones(StructCost *c, rebSep *rs){
+int lecturaOperaciones(StructCost *c, rebSep *rs, rebAbLin *ral, rebAbCua *rac){
 
     Deliveries dev;
     char code[CODE], name[NAME], nameSender[NAME], addres[NAME], dateS[DATE], dateR[DATE];
@@ -315,7 +270,7 @@ int lecturaOperaciones(StructCost *c, rebSep *rs){
     float costo;
 
     FILE *preload;
-    preload = fopen("Operaciones-Envios.txt", "r");
+    preload = fopen("PRUEBA.txt", "r");
 
     if(preload == NULL){
         printf("|----------------------------------------------|\n");
@@ -374,39 +329,80 @@ int lecturaOperaciones(StructCost *c, rebSep *rs){
 
                 switch(codeOperator){
                     case 1: value = altaRS(rs, dev);
-                            if(value == 2){
-
-                            }
+                            value = altaRAL(ral, dev);
+                            value = altaRAC(rac, dev);
                             break;
 
 
                     case 2: if(rs->cant != 0){
                                 value = bajaRS(rs, dev);
                             }
+                            if(ral->cant != 0){
+                                value = bajaRAL(ral, dev);
+                            }
+                            if(rac->cant != 0){
+                                value = bajaRAC(rac, dev);
+                            }
                             break;
                 }
             }
             else{
                 if(codeOperator == 3){
-                    if(rs->cant != 0){
-                        costo = 0.0;
-                        value = evocacionRS(*rs, &dev, &costo);
-                        if(value == 1){
-                            if(c->rs.maxCostSucEvo < costo){
-                                c->rs.maxCostSucEvo = costo;
-                            }
-                            c->rs.cantSucEvo += 1;
-                            c->rs.costAcumSucEvo += costo;
-                            c->rs.medCostSucEvo= (c->rs.costAcumSucEvo)/(c->rs.cantSucEvo);
+                    costo = 0.0;
+                    value = evocacionRS(*rs, &dev, &costo);
+                    if(value == 1){
+                        if(c->rs.maxCostSucEvo < costo){
+                            c->rs.maxCostSucEvo = costo;
                         }
-                        else{
-                            if(c->rs.maxCostFailEvo < costo){
-                                c->rs.maxCostFailEvo = costo;
-                            }
-                            c->rs.cantFailEvo += 1;
-                            c->rs.costAcumFailEvo += costo;
-                            c->rs.medCostFailEvo= (c->rs.costAcumFailEvo)/(c->rs.cantFailEvo);
+                        c->rs.cantSucEvo += 1;
+                        c->rs.costAcumSucEvo += costo;
+                        c->rs.medCostSucEvo= (c->rs.costAcumSucEvo)/(c->rs.cantSucEvo);
+                    }
+                    else{
+                        if(c->rs.maxCostFailEvo < costo){
+                            c->rs.maxCostFailEvo = costo;
                         }
+                        c->rs.cantFailEvo += 1;
+                        c->rs.costAcumFailEvo += costo;
+                        c->rs.medCostFailEvo= (c->rs.costAcumFailEvo)/(c->rs.cantFailEvo);
+                    }
+
+                    costo = 0.0;
+                    value = evocacionRAL(*ral, &dev, &costo);
+                    if(value == 1){
+                        if(c->ral.maxCostSucEvo < costo){
+                            c->ral.maxCostSucEvo = costo;
+                        }
+                        c->ral.cantSucEvo += 1;
+                        c->ral.costAcumSucEvo += costo;
+                        c->ral.medCostSucEvo= (c->ral.costAcumSucEvo)/(c->ral.cantSucEvo);
+                    }
+                    else{
+                        if(c->ral.maxCostFailEvo < costo){
+                            c->ral.maxCostFailEvo = costo;
+                        }
+                        c->ral.cantFailEvo += 1;
+                        c->ral.costAcumFailEvo += costo;
+                        c->ral.medCostFailEvo= (c->ral.costAcumFailEvo)/(c->ral.cantFailEvo);
+                    }
+                    
+                    costo = 0.0;
+                    value = evocacionRAC(*rac, &dev, &costo);
+                    if(value == 1){
+                        if(c->rac.maxCostSucEvo < costo){
+                            c->rac.maxCostSucEvo = costo;
+                        }
+                        c->rac.cantSucEvo += 1;
+                        c->rac.costAcumSucEvo += costo;
+                        c->rac.medCostSucEvo= (c->rac.costAcumSucEvo)/(c->rac.cantSucEvo);
+                    }
+                    else{
+                        if(c->rac.maxCostFailEvo < costo){
+                            c->rac.maxCostFailEvo = costo;
+                        }
+                        c->rac.cantFailEvo += 1;
+                        c->rac.costAcumFailEvo += costo;
+                        c->rac.medCostFailEvo= (c->rac.costAcumFailEvo)/(c->rac.cantFailEvo);
                     }
                 }
                 else{
