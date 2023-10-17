@@ -21,55 +21,57 @@ void initRAC(rebAbCua *rac){
 }
 
 
+/*
+return 0 - Fracaso
+return 1 - Exito
+*/
 int localizarRAC(rebAbCua *rac, char c[], int *position, float *costo){
 
-    int i, contador = 0, celda = -1;
+    int i, contador = 0, celda = -1, avanzar = 1;
     float costLoc = 0.0;
     i = hashing(c, MRAC);
 
     while((contador < MRAC) && (strcmp(rac->dev[i].code, VIRGEN) != 0) && (strcmp(rac->dev[i].code, c) != 0)){
+        
         if(celda == -1){
             if(strcmp(rac->dev[i].code, LIBRE) == 0){
                 celda = i;
             }
-            costLoc += 1;
-            i = i + contador;
-            contador += 1;
         }
+        costLoc += 1;
+        i = (i + avanzar) % MRAC;
+        avanzar += 1;
+        contador += 1;
     }
 
-    if(contador < MRAC){
+    if(contador < MRAC){    //No se ha recorrido todos los baldes
         costLoc += 1;
         *costo = costLoc;
-        if(strcmp(rac->dev[i].code, c) == 0){
+        if(strcmp(rac->dev[i].code, VIRGEN) != 0){  //Exito en la busqueda
             *position = i;
             return 1;
         }
-        if(strcmp(rac->dev[i].code, VIRGEN) != 0){
-            *position = i;
-            return 0; 
-        }
-        else{
-            if(celda != -1){
+        else{    //No tuvo exito, pero hay una celda virgen donde puede ir el elemento
+            if(celda != -1){       //Si habia una celda libre, retornar esa posicion para cargar el elemento
                 *position = celda;
                 return 0;
             }
-            else{
+            else{   //No habia celdas libres, retornar posicion con celda virgen
                 *position = i;
                 return 0;
             }
         }
     }
-    else{
-        if(celda != 1){
-            *position = celda;
-            return 0;
-        }
-        return 1;
+    else{          //Se recorrieron todos los baldes. Fracaso
+        return 0;
     }
 }
 
 
+/*
+return 0 - Fracaso
+return 1 - Exito
+*/
 int altaRAC(rebAbCua *rac, Deliveries dev){
 
     int position, hash;

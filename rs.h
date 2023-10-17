@@ -48,7 +48,7 @@ void resetRS(rebSep *rs){
 
 /*
 Codificacion de Localizacion:
-return 0 - Fracaso, no esta el elemento
+return 0 - Fracaso
 return 1 - Exito
 */
 int localizarRS(rebSep *rs, char c[], int *position, float *costo){
@@ -79,9 +79,8 @@ int localizarRS(rebSep *rs, char c[], int *position, float *costo){
 
 /*
 Codificacion de Alta:
-return 0 - Fracaso, no hay mas memoria
-return 1 - Fracaso, elemento existente
-return 2 - Exito
+return 0 - Fracaso
+return 1 - Exito
 */
 int altaRS(rebSep *rs, Deliveries dev){
 
@@ -95,14 +94,14 @@ int altaRS(rebSep *rs, Deliveries dev){
     else{
         if(localizarRS(rs, dev.code, &position, &costLoc) == 1){
             free((void*)newBalde);
-            return 1;
+            return 0;
         }
         else{
             newBalde->dev = dev;
             newBalde->prox = rs->access[position];
             rs->access[position] = newBalde;
             rs->cant += 1;
-            return 2;
+            return 1;
         }
     }
 }
@@ -110,9 +109,8 @@ int altaRS(rebSep *rs, Deliveries dev){
 
 /*
 Codificacion de Baja:
-return 0 - Fracaso, elemento inexistente
-return 1 - Fracaso, no coincide la nupla completa
-return 2 - Exito
+return 0 - Fracaso
+return 1 - Exito
 */
 int bajaRS(rebSep *rs, Deliveries dev){
 
@@ -137,10 +135,10 @@ int bajaRS(rebSep *rs, Deliveries dev){
             }
             free((void*)rs->cursor);
             rs->cant = rs->cant - 1;
-            return 2;
+            return 1;
         }
         else{
-            return 1;
+            return 0;
         }
     }
 }

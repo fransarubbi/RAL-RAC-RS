@@ -4,6 +4,39 @@
 #include "rac.h"
 
 
+/*
+Conclusiones:
+    |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|    
+    |             Rebalse Separado              |   |           Rebalse Abierto Lineal          |   |         Rebalse Abierto Cuadratico        |
+    |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
+    |   Funcion   |  Costo Max  |  Costo Medio  |   |   Funcion   |  Costo Max  |  Costo Medio  |   |   Funcion   |  Costo Max  |  Costo Medio  |
+    |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
+    |  Evoc. Exit |    5.00     |     2.29      |   |  Evoc. Exit |     6.00    |      1.68     |   |  Evoc. Exit |     7.00    |     1.72      |
+    |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
+    |  Evoc. Frac |    4.00     |     1.38      |   |  Evoc. Frac |     9.00    |      3.87     |   |  Evoc. Frac |     11.00   |     3.56      |
+    |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
+
+    Para realizar el analisis de las tres estructuras, solo se compara el rendimiento en evocaciones, ignorando por completo el costo de altas y bajas. 
+    Realizando un analisis del peor de los casos:
+
+        - RS: en el rebalse separado, el peor caso se produce cuando tenemos una mala funcion de hashing. Esto significa, que la funcion siempre retorna
+        el mismo valor de hash, y por lo tanto se produce una unica lista vinculada desordenada. Como resultado, tenemos un costo maximo tanto de exito
+        como de fracaso, orden O(N).
+
+        -RAL: en el rebalse abierto lineal, el peor caso se produce cuando todos los baldes tienen elementos, excepto el balde anterior al valor de hash
+        para un elemento dado. Esto resulta en que se deben recorrer todos los baldes.
+
+        -RAC: en el rebalse abierto cuadratico, el peor caso se produce cuando el elemento se encuentra en una posicion impar. Esto resulta en que se
+        deben recorrer los baldes, hasta que se consulte esa posicion.
+
+    Podemos ver en base a los resultados, que la estructura que tiene el mejor costo maximo exitoso, es el rebalse separado. Sin embargo, el costo medio
+    exitoso mas bajo, lo presenta el rebalse abierto lineal. Ademas, el rebalse separado tiene el mejor comportamiento en las evocaciones que fracasan.
+    Para poder elegir una de las tres, la preferencia la tendria el rebalse separado, ya que haciendo un balance es la de mejor rendimiento. Pero depende
+    de la situacion, si se sabe que se realizaran evocaciones que fracasan con frecuencia, lo mejor seria un RS. En otro caso, si la preferencia la tiene
+    el costo medio de evocacion exitosa, la mejor seria el RAL.
+*/
+
+
 //Funciones menu principal
 void mostrarEstructuras(rebSep , rebAbLin , rebAbCua);   //Mostrar las 3 estructuras
 int lecturaOperaciones(StructCost *, rebSep *, rebAbLin *, rebAbCua *);  //Funcion para leer desde el archivo
@@ -13,7 +46,6 @@ void mostrarCostos(StructCost );
 //Funciones internas
 void loadDeliveries(Deliveries *);   //Funcion auxiliar de carga de datos
 void resetAll(rebSep *, rebAbLin *, rebAbCua *);   //Funcion para resetear todas las estructuras
-
 
 
 int main(){
@@ -254,7 +286,7 @@ void mostrarCostos(StructCost c){
     printf("\n|----------------------------------------------------------|");
     printf("\n|     Funcion     |     Costo Max      |     Costo Medio   |");
     printf("\n|----------------------------------------------------------|");
-    printf("\n| Evoc. Exitosa   |   %.2f                %.2f              ", c.rac.maxCostSucEvo, c.rac.medCostSucEvo);
+    printf("\n| Evoc. Exitosa   |   %.2f                 %.2f              ", c.rac.maxCostSucEvo, c.rac.medCostSucEvo);
     printf("\n|----------------------------------------------------------");
     printf("\n| Evoc. Fracaso   |   %.2f                %.2f              ", c.rac.maxCostFailEvo, c.rac.medCostFailEvo);
     printf("\n|----------------------------------------------------------|\n");
@@ -270,7 +302,7 @@ int lecturaOperaciones(StructCost *c, rebSep *rs, rebAbLin *ral, rebAbCua *rac){
     float costo;
 
     FILE *preload;
-    preload = fopen("PRUEBA.txt", "r");
+    preload = fopen("Operaciones-Envios.txt", "r");
 
     if(preload == NULL){
         printf("|----------------------------------------------|\n");

@@ -43,30 +43,26 @@ int localizarRAL(rebAbLin *ral, char c[], int *position, float *costo){
         contador += 1;
     }
 
-    if(contador < MRAL){
+    if(contador < MRAL){    //No se ha recorrido todos los baldes
         costLoc += 1;
         *costo = costLoc;
-        if(strcmp(ral->dev[i].code, VIRGEN) != 0){
+        if(strcmp(ral->dev[i].code, VIRGEN) != 0){   //Exito en la busqueda
             *position = i;
             return 1;
         }
-        else{
-            if(celda != -1){
+        else{     //No tuvo exito, pero hay una celda virgen donde puede ir el elemento
+            if(celda != -1){     //Si habia una celda libre, retornar esa posicion para cargar el elemento
                 *position = celda;
                 return 0;
             }
-            else{
+            else{     //No habia celdas libres, retornar posicion con celda virgen
                 *position = i;
                 return 0;
             }
         }
     }
-    else{
-        if(celda != -1){
-            *position = celda;
-            return 0;
-        }
-        return 1;
+    else{     //Se recorrieron todos los baldes. Fracaso
+        return 0;
     }
 }
 
