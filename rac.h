@@ -62,7 +62,15 @@ int localizarRAC(rebAbCua *rac, char c[], int *position, float *costo){
             }
         }
     }
-    else{          //Se recorrieron todos los baldes. Fracaso
+    else{    
+        if(celda != -1){
+            *position = celda;
+            return 0;
+        }
+        else{
+            *position = -1;
+            return 0;
+        }
         return 0;
     }
 }
@@ -77,13 +85,18 @@ int altaRAC(rebAbCua *rac, Deliveries dev){
     int position, hash;
     float costLoc;
 
-    if(localizarRAC(rac, dev.code, &position, &costLoc) == 0){
-        rac->dev[position] = dev;
-        rac->cant += 1;
-        return 1;
+    if(rac->cant == MRAC){
+        return 0;
     }
     else{
-        return 0;
+        if(localizarRAC(rac, dev.code, &position, &costLoc) == 0){
+            rac->dev[position] = dev;
+            rac->cant += 1;
+            return 1;
+        }
+        else{
+            return 0;
+        }
     }
 }
 
@@ -159,6 +172,7 @@ void mostrarRAC(rebAbCua rac){
         }
         if(strcmp(rac.dev[i].code, VIRGEN) != 0){
             if(strcmp(rac.dev[i].code, LIBRE) != 0){
+                printf("\n|========================================|");
                 printf("\n| Mostrando Elemento del Balde: %d\n", i);
                 printf("\n|========================================|");
                 printf("\n| Codigo: %s", rac.dev[i].code);

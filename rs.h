@@ -179,6 +179,7 @@ void mostrarRS(rebSep rs){
     for(i = 0; i < MRS; i++){
         rs.cursor = rs.access[i];
         if(rs.cursor != NULL){
+            printf("\n|  Lista cargada en Hashing: %d |", i);
             while(rs.cursor != NULL){
                 printf("\n|========================================|");
                 printf("\n| Codigo: %s", rs.cursor->dev.code);
@@ -192,6 +193,7 @@ void mostrarRS(rebSep rs){
                 printf("\n|========================================|\n\n");
                 rs.cursor = rs.cursor->prox;
             }
+            printf("| Fin lista cargada en Hashing: %d |\n\n", i);
         }
         else{
             printf("La lista esta vacia. Hashing: %d\n", i);

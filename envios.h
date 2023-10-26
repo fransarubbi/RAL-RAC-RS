@@ -74,7 +74,6 @@ typedef struct{
 
 
 int hashing(char c[], int M){
-    
     int longitud, i, contador = 0;
     longitud = strlen(c);
     for(i = 0; i < longitud; i++){

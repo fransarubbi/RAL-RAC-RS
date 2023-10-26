@@ -61,8 +61,15 @@ int localizarRAL(rebAbLin *ral, char c[], int *position, float *costo){
             }
         }
     }
-    else{     //Se recorrieron todos los baldes. Fracaso
-        return 0;
+    else{  
+        if(celda != -1){
+            *position = celda;
+            return 0;
+        }
+        else{
+            *position = -1;
+            return 0;
+        }
     }
 }
 
@@ -76,13 +83,23 @@ int altaRAL(rebAbLin *ral, Deliveries dev){
     float costLoc = 0.0;
     int position;
 
-    if(localizarRAL(ral, dev.code, &position, &costLoc) == 0){
-        ral->dev[position] = dev;
-        ral->cant += 1;
-        return 1;
+    if(ral->cant == MRAL){
+        return 0;
     }
     else{
-        return 0;
+        if(localizarRAL(ral, dev.code, &position, &costLoc) == 0){
+            if(position == -1){
+                return 0;
+            }
+            else{
+                ral->dev[position] = dev;
+                ral->cant += 1;
+                return 1;
+            }
+        }
+        else{
+            return 0;
+        }
     }
 }
 
@@ -158,6 +175,7 @@ void mostrarRAL(rebAbLin ral){
         }
         if(strcmp(ral.dev[i].code, VIRGEN) != 0){
             if(strcmp(ral.dev[i].code, LIBRE) != 0){
+                printf("\n|========================================|");
                 printf("\n| Mostrando Elemento del Balde: %d\n", i);
                 printf("\n|========================================|");
                 printf("\n| Codigo: %s", ral.dev[i].code);
