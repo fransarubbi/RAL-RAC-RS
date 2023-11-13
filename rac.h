@@ -90,9 +90,14 @@ int altaRAC(rebAbCua *rac, Deliveries dev){
     }
     else{
         if(localizarRAC(rac, dev.code, &position, &costLoc) == 0){
-            rac->dev[position] = dev;
-            rac->cant += 1;
-            return 1;
+            if(position == -1){
+                return 0;
+            }
+            else{
+                rac->dev[position] = dev;
+                rac->cant += 1;
+                return 1;
+            }
         }
         else{
             return 0;
