@@ -388,7 +388,6 @@ int lecturaOperaciones(StructCost *c, rebSep *rs, rebAbLin *ral, rebAbCua *rac){
                         }
                         c->rs.cantSucEvo += 1;
                         c->rs.costAcumSucEvo += costo;
-                        c->rs.medCostSucEvo= (c->rs.costAcumSucEvo)/(c->rs.cantSucEvo);
                     }
                     else{
                         if(c->rs.maxCostFailEvo < costo){
@@ -396,7 +395,6 @@ int lecturaOperaciones(StructCost *c, rebSep *rs, rebAbLin *ral, rebAbCua *rac){
                         }
                         c->rs.cantFailEvo += 1;
                         c->rs.costAcumFailEvo += costo;
-                        c->rs.medCostFailEvo= (c->rs.costAcumFailEvo)/(c->rs.cantFailEvo);
                     }
 
                     costo = 0.0;
@@ -407,7 +405,7 @@ int lecturaOperaciones(StructCost *c, rebSep *rs, rebAbLin *ral, rebAbCua *rac){
                         }
                         c->ral.cantSucEvo += 1;
                         c->ral.costAcumSucEvo += costo;
-                        c->ral.medCostSucEvo= (c->ral.costAcumSucEvo)/(c->ral.cantSucEvo);
+                        
                     }
                     else{
                         if(c->ral.maxCostFailEvo < costo){
@@ -415,7 +413,6 @@ int lecturaOperaciones(StructCost *c, rebSep *rs, rebAbLin *ral, rebAbCua *rac){
                         }
                         c->ral.cantFailEvo += 1;
                         c->ral.costAcumFailEvo += costo;
-                        c->ral.medCostFailEvo= (c->ral.costAcumFailEvo)/(c->ral.cantFailEvo);
                     }
                     
                     costo = 0.0;
@@ -426,7 +423,6 @@ int lecturaOperaciones(StructCost *c, rebSep *rs, rebAbLin *ral, rebAbCua *rac){
                         }
                         c->rac.cantSucEvo += 1;
                         c->rac.costAcumSucEvo += costo;
-                        c->rac.medCostSucEvo= (c->rac.costAcumSucEvo)/(c->rac.cantSucEvo);
                     }
                     else{
                         if(c->rac.maxCostFailEvo < costo){
@@ -434,7 +430,6 @@ int lecturaOperaciones(StructCost *c, rebSep *rs, rebAbLin *ral, rebAbCua *rac){
                         }
                         c->rac.cantFailEvo += 1;
                         c->rac.costAcumFailEvo += costo;
-                        c->rac.medCostFailEvo= (c->rac.costAcumFailEvo)/(c->rac.cantFailEvo);
                     }
                 }
                 else{
@@ -446,6 +441,14 @@ int lecturaOperaciones(StructCost *c, rebSep *rs, rebAbLin *ral, rebAbCua *rac){
             codeOperator = 0;
         }
         fclose(preload);
+
+        c->rs.medCostSucEvo= (c->rs.costAcumSucEvo)/(c->rs.cantSucEvo);
+        c->rs.medCostFailEvo= (c->rs.costAcumFailEvo)/(c->rs.cantFailEvo);
+        c->ral.medCostSucEvo= (c->ral.costAcumSucEvo)/(c->ral.cantSucEvo);
+        c->ral.medCostFailEvo= (c->ral.costAcumFailEvo)/(c->ral.cantFailEvo);
+        c->rac.medCostSucEvo= (c->rac.costAcumSucEvo)/(c->rac.cantSucEvo);
+        c->rac.medCostFailEvo= (c->rac.costAcumFailEvo)/(c->rac.cantFailEvo);
+
         return 1;
     }
 }

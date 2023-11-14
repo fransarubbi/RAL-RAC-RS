@@ -61,7 +61,8 @@ int localizarRAL(rebAbLin *ral, char c[], int *position, float *costo){
             }
         }
     }
-    else{  
+    else{
+        *costo = costLoc;  
         if(celda != -1){
             *position = celda;
             return 0;

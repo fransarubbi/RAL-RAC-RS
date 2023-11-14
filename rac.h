@@ -63,6 +63,7 @@ int localizarRAC(rebAbCua *rac, char c[], int *position, float *costo){
         }
     }
     else{    
+        *costo = costLoc;
         if(celda != -1){
             *position = celda;
             return 0;
